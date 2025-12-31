@@ -12,11 +12,17 @@ export const navLinks = [
     {
         id: 3,
         url: "#",
-        label: "My Plan"
+        label: "Accomodation"
     },
     {
         id: 4,
         url: "#",
+        label: "My Plan"
+    },
+    {
+        id: 5,
+        url: "#",
         label: "Sign Up"
     }
+    
 ]
