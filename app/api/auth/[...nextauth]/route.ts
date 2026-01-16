@@ -1,12 +1,12 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { pool } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
-    // Local login
+    // ------------------ CREDENTIAL LOGIN ------------------
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -14,21 +14,24 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const [rows]: any = await pool.query("SELECT * FROM users WHERE email = ?", [
-          credentials?.email,
-        ]);
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const [rows]: any = await pool.query(
+          "SELECT * FROM users WHERE email = ?",
+          [credentials.email]
+        );
 
         const user = rows[0];
         if (!user) return null;
 
         const isValid = user.password
-          ? await bcrypt.compare(credentials!.password, user.password)
+          ? await bcrypt.compare(credentials.password, user.password)
           : false;
 
         if (!isValid) return null;
 
         return {
-          id: user.id,
+          id: String(user.id),
           name: user.full_name,
           email: user.email,
           isAdmin: user.is_admin,
@@ -36,7 +39,7 @@ export const authOptions = {
       },
     }),
 
-    // Google login
+    // ------------------ GOOGLE LOGIN ------------------
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
@@ -48,17 +51,20 @@ export const authOptions = {
   },
 
   callbacks: {
+    // -------- JWT CALLBACK --------
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.isAdmin = user.isAdmin || 0;
+        token.isAdmin = (user as any).isAdmin || 0;
       }
       return token;
     },
+
+    // -------- SESSION CALLBACK --------
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id;
-        session.user.isAdmin = token.isAdmin;
+      if (session.user) {
+        (session.user as any).id = token.id;
+        (session.user as any).isAdmin = token.isAdmin;
       }
       return session;
     },

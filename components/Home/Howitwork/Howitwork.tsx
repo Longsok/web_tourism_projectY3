@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants, easeOut } from "framer-motion";
 
 export default function HowItWorks() {
   const steps = [
@@ -11,23 +11,23 @@ export default function HowItWorks() {
   ];
 
   // Container variant to stagger the children
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3, // Time between each item (0.3s)
+        staggerChildren: 0.3,
       },
     },
   };
 
   // Individual item variant
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0, 
-      transition: { duration: 0.5, ease: "easeOut" } 
+      transition: { duration: 0.5, ease: easeOut } // ✅ fixed easing
     },
   };
 
@@ -47,8 +47,8 @@ export default function HowItWorks() {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }} // Starts when 20% of section is visible
-          className="grid grid-cols-1 md:grid-cols-4 gap-8"
+          viewport={{ once: true, amount: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-4 gap-8 relative"
         >
           {steps.map((step, index) => (
             <motion.div 
@@ -67,7 +67,7 @@ export default function HowItWorks() {
                 <motion.div 
                   initial={{ opacity: 0, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: (index + 1) * 0.3 }}
+                  transition={{ delay: (index + 1) * 0.3, ease: easeOut }} // ✅ add easing here too
                   className="hidden md:block absolute top-10 -right-4 text-blue-300 text-2xl"
                 >
                   →

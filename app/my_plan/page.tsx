@@ -1,7 +1,8 @@
 "use client";
+
 import { useSearchParams, useRouter } from "next/navigation";
 import TimelinePage from "../../components/timeline/TimelinePage";
-import { Heart, MapPin, Plus, Star } from "lucide-react";
+import { Heart, MapPin } from "lucide-react";
 
 export default function MyPlanPage() {
   const searchParams = useSearchParams();
@@ -23,12 +24,12 @@ export default function MyPlanPage() {
     days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   }
 
-  // 👉 if plan exists, show timeline
+  // Show timeline if a plan exists
   if (location) {
     return <TimelinePage location={location} type={type} budget={budget} days={days} />;
   }
 
-  // 👉 Favorites data (later connect API)
+  // Placeholder favorites
   const favorites: any[] = [];
 
   return (

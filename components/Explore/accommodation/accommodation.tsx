@@ -1,7 +1,8 @@
 "use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, Variants, easeOut } from "framer-motion";
 
 type Accommodation = {
   id: number;
@@ -22,13 +23,13 @@ const Accommodation = () => {
     fetch("/api/accommodations")
       .then((res) => res.json())
       .then((data) => {
-        const formatted = Array.isArray(data)
+        const formatted: Accommodation[] = Array.isArray(data)
           ? data.map((item: any) => ({
               id: item.id,
               title: item.name,
               location: item.location,
               price: item.price_per_night,
-              type: item.accommodation_typetype,
+              type: item.accommodation_type, // fixed typo
               image_url: item.main_image,
               rating: item.rating,
             }))
@@ -48,23 +49,23 @@ const Accommodation = () => {
     }
   };
 
-  // Animation Variants
-  const containerVariants = {
+  // ---------------- Animation Variants ----------------
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1, // Staggers the entry of each card
+        staggerChildren: 0.1,
       },
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
+      transition: { duration: 0.5, ease: easeOut },
     },
   };
 
@@ -73,9 +74,8 @@ const Accommodation = () => {
 
   return (
     <div className="accommodation_section container mx-auto my-12 relative px-4">
-      
-      {/* Title with individual scroll motion */}
-      <motion.div 
+      {/* Title */}
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -90,6 +90,7 @@ const Accommodation = () => {
         </p>
       </motion.div>
 
+      {/* Scroll button */}
       <button
         onClick={scrollRight}
         className="absolute right-2 top-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-3 z-10 border border-gray-200 hidden md:block"
@@ -97,13 +98,13 @@ const Accommodation = () => {
         &#8594;
       </button>
 
-      {/* Grid/Scroll container with staggered entry */}
+      {/* Scroll container with motion */}
       <motion.div
         ref={scrollRef}
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }} // Trigger when 20% of the section is visible
+        viewport={{ once: true, amount: 0.2 }}
         className="flex overflow-x-auto space-x-6 py-4 scrollbar-hide scroll-smooth"
       >
         {items.map((item) => (
