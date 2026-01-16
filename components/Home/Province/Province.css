@@ -66,3 +66,21 @@
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7); /* shadow effect */
   z-index: 10;         /* ensure it is in front of image */
 }
+
+.province-scroll-container {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+}
+
+/* Hide scrollbar */
+.province-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.province-scroll-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

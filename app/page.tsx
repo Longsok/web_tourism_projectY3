@@ -1,18 +1,20 @@
 import Hero from "@/components/Home/Hero/Hero";
 import React from "react";
 import Popular from "@/components/Home/Popular/Popular";
-import Category from "@/components/Home/Category/Category";
 import Province from "@/components/Home/Province/Province";
+import HowItWorks from "@/components/Home/Howitwork/Howitwork";
+import WhyChooseUs from "@/components/Home/WhyChooseUs/WhyChooseUs";
 
-const HomePage= () => {
+const page= () => {
   return (
     <div className="Homepage bg-white text-black text-5xl">
       <Hero />
+      <HowItWorks />
       <Popular />
-      <Category />
       <Province />
+      <WhyChooseUs />
     </div>
   );
 }
 
-export default HomePage;
+export default page;

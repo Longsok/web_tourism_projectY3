@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 type Place = {
   id: number;
@@ -13,7 +14,7 @@ const Popular = () => {
   const [places, setPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
-
+                                                                       
   useEffect(() => {
     fetch("/api/places")
       .then((res) => res.json())
@@ -56,9 +57,9 @@ const Popular = () => {
             key={place.id}
             className="flex-shrink-0 w-64 bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
           >
-            <div className="h-40 overflow-hidden">
+            <div className="h-45 overflow-hidden">
               <img
-                src={place.image || "/placeholder.jpg"}
+                src={place.main_image || "/placeholder.jpg"}
                 className="w-full h-full object-cover"
                 alt={place.name}
               />
@@ -68,9 +69,13 @@ const Popular = () => {
               <h5 className="font-bold text-sm">{place.name}</h5>
               <p className="text-xs text-gray-500">{place.location}</p>
               <p className="text-xs text-gray-400">{place.category}</p>
-              <button className="mt-2 text-xs text-blue-500 hover:underline">
-                See Details
-              </button>
+              <Link
+                  href={`/places/${place.id}`}
+                  className="mt-2 inline-block text-xs text-blue-500 hover:underline"
+                >
+                  See Details
+              </Link>
+
             </div>
           </div>
         ))}

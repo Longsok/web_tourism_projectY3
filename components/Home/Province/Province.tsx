@@ -1,30 +1,42 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import Link from "next/link";
 import "./Province.css";
 
-interface ProvinceCardProps {
+interface ProvinceData {
+  id: number;
   name: string;
-  imageUrl: string;
+  main_image: string; // Matches the column name in your database
 }
 
-const provinces: ProvinceCardProps[] = [
-  { name: "Phnom Penh", imageUrl: "https://www.indochinavoyages.com/wp-content/uploads/2024/02/phnom-penh-independent-station-by-night-1200x900.jpg" },
-  { name: "Kampong Cham", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgxOObrenlqoUF8kEyseqfamu_F_sRWivzAQ&s" },
-  { name: "Siem Reap", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM_q3Jd1JwAlDDmuNQxumeRan_KMrrXDS7eQ&s" },
-  { name: "Koh Kong Province", imageUrl: "https://i0.wp.com/www.cambodialifestyle.com/wp-content/uploads/2024/04/Koh-Kong3.jpg?fit=1024%2C722&ssl=1" },
-  { name: "Steung Treng Province", imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj3X58ULIDGZp7INoAYsFweudado0CTMz5rA&s" },
-  { name: "Kampot Province", imageUrl: "https://faidaily.wordpress.com/wp-content/uploads/2018/07/duren-kompot.jpg?w=825" },
-  // Add more provinces to reach 25
-];
-
 const Province: React.FC = () => {
+  const [provinces, setProvinces] = useState<ProvinceData[]>([]);
+  const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Fetch data from your Railway API
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const res = await fetch("/api/provinces"); // We need to create this route
+        const data = await res.json();
+        setProvinces(data);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProvinces();
+  }, []);
 
   const scrollRight = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
+
+  if (loading) return <div className="p-8 text-center">Loading Provinces...</div>;
 
   return (
     <div className="province-section container my-8 relative">
@@ -33,30 +45,30 @@ const Province: React.FC = () => {
       {/* Right Arrow */}
       <button
         onClick={scrollRight}
-        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow p-2 z-10 hover:bg-gray-100"
+        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full shadow p-2 z-10 hover:bg-gray-100 border border-gray-200"
       >
         &#8594;
       </button>
 
       {/* Horizontal Scroll Container */}
-      <div
-        ref={scrollRef}
-        className="province-scroll-container"
-      >
+      <div ref={scrollRef} className="province-scroll-container">
         {provinces.map((province) => (
-          <div
-            key={province.name}
-            className="province-card"
+          <Link 
+            href={`/provinces/${province.id}`} 
+            key={province.id} 
+            className="province-card group cursor-pointer"
           >
-            <div className="province-img-wrapper">
+            <div className="province-img-wrapper overflow-hidden rounded-2xl">
               <img
-                src={province.imageUrl}
-                className="province-img"
+                src={province.main_image}
+                className="province-img group-hover:scale-110 transition-transform duration-500"
                 alt={province.name}
               />
             </div>
-            <div className="province-name">{province.name}</div>
-          </div>
+            <div className="province-name group-hover:text-blue-600 transition-colors">
+              {province.name}
+            </div>
+          </Link>
         ))}
       </div>
     </div>
